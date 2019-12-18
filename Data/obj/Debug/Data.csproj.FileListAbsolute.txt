@@ -1,0 +1,17 @@
+C:\Users\Ulisses\source\repos\FINALAT\Data\bin\Debug\Data.dll.config
+C:\Users\Ulisses\source\repos\FINALAT\Data\bin\Debug\Data.dll
+C:\Users\Ulisses\source\repos\FINALAT\Data\bin\Debug\Data.pdb
+C:\Users\Ulisses\source\repos\FINALAT\Data\bin\Debug\EntityFramework.dll
+C:\Users\Ulisses\source\repos\FINALAT\Data\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Ulisses\source\repos\FINALAT\Data\bin\Debug\EntityFramework.xml
+C:\Users\Ulisses\source\repos\FINALAT\Data\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Ulisses\source\repos\FINALAT\Data\obj\Debug\Data.csproj.CoreCompileInputs.cache
+C:\Users\Ulisses\source\repos\FINALAT\Data\obj\Debug\Data.csproj.CopyComplete
+C:\Users\Ulisses\source\repos\FINALAT\Data\obj\Debug\Data.dll
+C:\Users\Ulisses\source\repos\FINALAT\Data\obj\Debug\Data.pdb
+C:\Users\Ulisses\source\repos\FINALAT\Data\bin\Debug\log4net.dll
+C:\Users\Ulisses\source\repos\FINALAT\Data\bin\Debug\Migrations.dll
+C:\Users\Ulisses\source\repos\FINALAT\Data\bin\Debug\log4net.xml
+C:\Users\Ulisses\source\repos\FINALAT\Data\obj\Debug\Data.csprojAssemblyReference.cache
+C:\Users\Ulisses\source\repos\FINALAT\Data\bin\Debug\System.Data.SqlClient.dll
+C:\Users\Ulisses\source\repos\FINALAT\Data\bin\Debug\System.Data.SqlClient.xml
