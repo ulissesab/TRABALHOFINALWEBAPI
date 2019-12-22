@@ -29,9 +29,20 @@ namespace API.Controllers
         // GET: 
         public List<Author> Get()
         {
+            List<Author> Authors = new List<Author>();
+            foreach (var p in _datacontext.Authors)
+            {
+                var author = new Author()
+                {
+                    Id = p.Id,
+                    FirstName = p.FirstName,
+                    LastName = p.LastName
+                };
+                Authors.Add(author);
+            }
+            return Authors;
 
 
-            return _datacontext.Authors.ToList();
         }
 
         // GET: 

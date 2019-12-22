@@ -18,7 +18,8 @@ namespace WebMvc.Controllers
         // GET: 
         public async Task<ActionResult> Index()
         {
-            return View(await GetAuthors() ?? new List<AuthorViewModel>());
+            IEnumerable<AuthorViewModel> authors = await GetAuthors();
+            return View(authors);
         }
 
         // GET: /Details/5

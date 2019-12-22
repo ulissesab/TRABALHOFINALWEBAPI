@@ -21,9 +21,10 @@ namespace WebMvc.Controllers
         // GET: 
         public async Task<ActionResult> Index()
         {
-            
 
-            return View(await GetBooks() ?? new List<BookViewModel>());
+            IEnumerable<BookViewModel> books = await GetBooks();
+            return View(books);
+
         }
 
         // GET: /Details/5

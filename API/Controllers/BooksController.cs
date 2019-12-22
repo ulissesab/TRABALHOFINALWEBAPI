@@ -27,9 +27,21 @@ namespace API.Controllers
         public List<Book> Get()
         {
 
-
-            return _datacontext.Books.ToList();
+            List<Book> Books = new List<Book>();
+            foreach (var p in _datacontext.Books)
+            {
+                var book = new Book()
+                {
+                    Id = p.Id,
+                    Isbn = p.Isbn,
+                    Title = p.Title
+                };
+                Books.Add(book);
+            }
+            return Books;
         }
+
+    
 
         // GET: 
         [Route("GetBookById/{id}")]
