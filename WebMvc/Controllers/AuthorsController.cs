@@ -18,14 +18,14 @@ namespace WebMvc.Controllers
         // GET: 
         public async Task<ActionResult> Index()
         {
-            IEnumerable<AuthorViewModel> authors = await GetAuthors();
-            return View(authors);
+            return View(await GetAuthors() ?? new List<AuthorViewModel>());
         }
 
         // GET: /Details/5
         public async Task<ActionResult> Details(int id)
         {
-            return View(await GetAuthorById(id));
+            AuthorViewModel author = await GetAuthorById(id);
+            return View(author);
         }
 
         // GET: /Create
@@ -101,7 +101,7 @@ namespace WebMvc.Controllers
         }
 
         // GET: /Delete/5
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete( int id)
         {
             return View(await GetAuthorById(id));
         }
@@ -113,7 +113,7 @@ namespace WebMvc.Controllers
             {
                 using (var content = new MultipartFormDataContent())
                 {
-                    client.BaseAddress = new Uri("http://localhost:49578/");
+                    client.BaseAddress = new Uri("http://localhost:49578/api/");
                     client.DefaultRequestHeaders.Accept.Clear();
                     var response = await client.DeleteAsync("/api/Authors/" + id);
                     if (response.IsSuccessStatusCode)
@@ -151,11 +151,11 @@ namespace WebMvc.Controllers
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("http://localhost:49578/");
-                var response = await client.GetAsync("/api/Authors/" + id);
+                var response = await client.GetAsync("/api/Authors/GetAuthorById/" + id);
                 if (response.IsSuccessStatusCode)
                 {
-                    var AuthorById = await response.Content.ReadAsAsync<AuthorViewModel>();
-                    return AuthorById;
+                    var author = await response.Content.ReadAsAsync<AuthorViewModel>();
+                    return author;
                 }
                 return null;
             }

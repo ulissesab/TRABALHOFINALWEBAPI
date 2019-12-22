@@ -5,16 +5,14 @@ namespace Data
 {
     public class Author
     {
-        public object Id;
+        
+  
 
-        public int AuthorId { get; set; }
+        public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public ICollection<Book> Books { get; set; }
 
-        public static void Add(Author author)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

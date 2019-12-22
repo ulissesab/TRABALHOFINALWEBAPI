@@ -14,7 +14,7 @@ namespace API.Controllers
     [RoutePrefix("api/Books")]
     public class BooksController : ApiController
     {
-
+        private DataContext db = new DataContext();
         private DataContext _datacontext;
 
         public BooksController()
@@ -26,67 +26,47 @@ namespace API.Controllers
         // GET: 
         public List<Book> Get()
         {
-            List<Book> books = new List<Book>();
-            foreach (var e in _datacontext.Books)
-            {
-                books.Add(e);
-            }
-            return books;
+
+
+            return _datacontext.Books.ToList();
         }
 
         // GET: 
+        [Route("GetBookById/{id}")]
         public BookBindModel Get(int id)
         {
-            Book e = _datacontext.Books.Where(p => p.BookId == id).FirstOrDefault();
-            BookBindModel book = new BookBindModel()
-            {
-                BookId = e.BookId,
-                Isbn = e.Isbn,
-                Title = e.Title,
+            var model = _datacontext.Books.Where(a => a.Id == id).FirstOrDefault();
 
+            BookBindModel bookSelecionado = new BookBindModel()
+            {
+                Id = model.Id,
+                Isbn = model.Isbn,
+                Title= model.Title,
 
             };
-            return book;
+            return bookSelecionado;
         }
 
         // POST: 
         [Route("Create")]
-        public async Task<IHttpActionResult> Post(BookBindModel bindBook)
+        public async Task<IHttpActionResult> Post()
         {
             if (!Request.Content.IsMimeMultipartContent())
             {
                 return BadRequest();
             }
             var model = await DesserializeObject();
-            var book = new Book()
+            var BookCriado = new Book()
             {
-                Isbn = bindBook.Isbn,
-                Title = bindBook.Title,
-
-
-
+                Isbn = model.Isbn,
+                Title= model.Title,
             };
-            _datacontext.Books.Add(book);
+            _datacontext.Books.Add(BookCriado);
             _datacontext.SaveChanges();
-
-            foreach (var authId in bindBook.AuthorsIdList)
-            {
-                Author author = _datacontext.Authors.Find(authId);
-                book.Authors.Add(author);
-
-            }
-
-            _datacontext.Entry(book).State = System.Data.Entity.EntityState.Modified;
-            _datacontext.SaveChanges();
-
-
-
-
             return Ok();
         }
 
         // PUT: 
-        [Route("Edit")]
         public async Task<IHttpActionResult> Put()
         {
             if (!Request.Content.IsMimeMultipartContent())
@@ -94,11 +74,11 @@ namespace API.Controllers
                 return BadRequest();
             }
             var model = await DesserializeObject();
-            var bookAlterado = _datacontext.Books.Where(e => e.BookId == model.BookId).FirstOrDefault();
-            if (bookAlterado != null)
+            var BookToUpdate = _datacontext.Books.Where(a => a.Id == model.Id).FirstOrDefault();
+            if (BookToUpdate != null)
             {
-                bookAlterado.Title = model.Title;
-               
+                BookToUpdate.Isbn = model.Isbn;
+                BookToUpdate.Title= model.Title;
 
             }
             _datacontext.SaveChanges();
@@ -108,13 +88,16 @@ namespace API.Controllers
         // DELETE: 
         public void Delete(int id)
         {
-            var bookDeletado = _datacontext.Books.Where(e => e.BookId == id).FirstOrDefault();
-            if (bookDeletado != null)
+            var bookRemovido = _datacontext.Books.Where(a => a.Id == id).FirstOrDefault();
+            if (bookRemovido != null)
             {
-                _datacontext.Books.Remove(bookDeletado);
+                _datacontext.Books.Remove(bookRemovido);
+
+                _datacontext.SaveChanges();
             }
-            _datacontext.SaveChanges();
         }
+
+
 
         public async Task<BookBindModel> DesserializeObject()
         {
@@ -124,9 +107,11 @@ namespace API.Controllers
 
             return model;
         }
-
     }
 }
+
+
+
 
 
 

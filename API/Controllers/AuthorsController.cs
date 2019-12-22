@@ -29,19 +29,22 @@ namespace API.Controllers
         // GET: 
         public List<Author> Get()
         {
-          
-            
+
+
             return _datacontext.Authors.ToList();
         }
 
         // GET: 
         [Route("GetAuthorById/{id}")]
-        public AuthorBindModel Get(int AuthorId)
+        public AuthorBindModel Get(int id)
         {
-            Author p = _datacontext.Authors.Where(author =>AuthorId == AuthorId).FirstOrDefault();
+            var model = _datacontext.Authors.Where(a => a.Id == id).FirstOrDefault();
+
             AuthorBindModel authorSelecionado = new AuthorBindModel()
             {
-                AuthorId = p.AuthorId,
+                Id = model.Id,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
 
             };
             return authorSelecionado;
@@ -59,7 +62,7 @@ namespace API.Controllers
             var AuthorCriado = new Author()
             {
                 FirstName = model.FirstName,
-
+                LastName = model.LastName,
             };
             _datacontext.Authors.Add(AuthorCriado);
             _datacontext.SaveChanges();
@@ -74,40 +77,42 @@ namespace API.Controllers
                 return BadRequest();
             }
             var model = await DesserializeObject();
-            var AuthorToUpdate = _datacontext.Authors.Where(a => a.AuthorId == model.AuthorId).FirstOrDefault();
+            var AuthorToUpdate = _datacontext.Authors.Where(a => a.Id == model.Id).FirstOrDefault();
             if (AuthorToUpdate != null)
             {
                 AuthorToUpdate.FirstName = model.FirstName;
+                AuthorToUpdate.LastName = model.LastName;
 
             }
             _datacontext.SaveChanges();
-            return Ok();
+              return Ok();
         }
 
         // DELETE: 
-        public void Delete(int Authorid)
+        public void Delete(int id)
         {
-            var AuthorToDelete = _datacontext.Authors.Where(a => a.AuthorId == Authorid).FirstOrDefault();
-            if (AuthorToDelete != null)
+            var authorRemovido = _datacontext.Authors.Where(a => a.Id == id).FirstOrDefault();
+             if (authorRemovido != null)
             {
-                _datacontext.Authors.Remove(AuthorToDelete);
+                _datacontext.Authors.Remove(authorRemovido);
+
+                _datacontext.SaveChanges();
             }
-            _datacontext.SaveChanges();
         }
+    
 
-        public async Task<AuthorBindModel> DesserializeObject()
-        {
-            var result = await Request.Content.ReadAsMultipartAsync();
-            var requestJson = await result.Contents[0].ReadAsStringAsync();
-            var model = JsonConvert.DeserializeObject<AuthorBindModel>(requestJson);
-            if (result.Contents.Count > 1)
-            {
 
-            }
-            return model;
+          public async Task<AuthorBindModel> DesserializeObject()
+          {
+              var result = await Request.Content.ReadAsMultipartAsync();
+              var requestJson = await result.Contents[0].ReadAsStringAsync();
+              var model = JsonConvert.DeserializeObject<AuthorBindModel>(requestJson);
+          
+              return model;
         }
     }
 }
+
 
 
 

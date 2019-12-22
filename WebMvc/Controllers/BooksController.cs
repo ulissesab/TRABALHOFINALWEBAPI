@@ -16,25 +16,27 @@ namespace WebMvc.Controllers
     public class BooksController : Controller
     {
 
-        public int IdBook { get; private set; }
+
 
         // GET: 
         public async Task<ActionResult> Index()
         {
+            
+
             return View(await GetBooks() ?? new List<BookViewModel>());
         }
-
-
 
         // GET: /Details/5
         public async Task<ActionResult> Details(int id)
         {
-            return View(await GetBookById(id));
+            BookViewModel book = await GetBookById(id);
+            return View(book);
         }
 
         // GET: /Create
-        public ActionResult Create()
+        public ActionResult Create( )
         {
+            
             return View();
         }
 
@@ -42,6 +44,8 @@ namespace WebMvc.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(BookViewModel model)
         {
+
+           
             try
             {
                 using (var client = new HttpClient())
@@ -73,27 +77,35 @@ namespace WebMvc.Controllers
         // GET: /Edit/5
         public async Task<ActionResult> Edit(int id)
         {
-            if (await GetBooks() != null)
-            {
-                ViewBag.BooksList = new SelectList(await GetBooks(), "Id", "Nome");
-            }
             return View(await GetBookById(id));
         }
 
         // POST: /Edit/5
         [HttpPost]
-        public async Task<ActionResult> Edit(int id, BookViewModel model)
+        public async Task<ActionResult> Edit(BookViewModel model)
         {
-            int IdBook = int.Parse(Request.Form["BooksList"].ToString());
-            model.BookId = IdBook;
-            try
+            using (var client = new HttpClient())
             {
-                return await CreateAndSendForm("Edit", model);
+                using (var content = new MultipartFormDataContent())
+                {
+                    client.BaseAddress = new Uri("http://localhost:49578/");
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    content.Add(new StringContent(JsonConvert.SerializeObject(model)));
+
+                    var response = await client.PutAsync("/api/Books", content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("Index", "Books");
+                    }
+                    else
+                    {
+                        return View("Error");
+                    }
+
+                }
+
             }
-            catch
-            {
-                return View("Index");
-            }
+
         }
 
         // GET: /Delete/5
@@ -101,7 +113,6 @@ namespace WebMvc.Controllers
         {
             return View(await GetBookById(id));
         }
-
         // POST: /Delete/5
         [HttpPost]
         public async Task<ActionResult> Delete(int id, FormCollection collection)
@@ -110,7 +121,7 @@ namespace WebMvc.Controllers
             {
                 using (var content = new MultipartFormDataContent())
                 {
-                    client.BaseAddress = new Uri("http://localhost:49578/");
+                    client.BaseAddress = new Uri("http://localhost:49578/api/");
                     client.DefaultRequestHeaders.Accept.Clear();
                     var response = await client.DeleteAsync("/api/Books/" + id);
                     if (response.IsSuccessStatusCode)
@@ -126,21 +137,6 @@ namespace WebMvc.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<BookViewModel> GetBookById(int id)
-        {
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri("http://localhost:49578/");
-                var response = await client.GetAsync("/api/Books/" + id);
-                if (response.IsSuccessStatusCode)
-                {
-                    var bookById = await response.Content.ReadAsAsync<BookViewModel>();
-                    return bookById;
-                }
-                return null;
-            }
-        }
 
         [HttpGet]
         public async Task<IEnumerable<BookViewModel>> GetBooks()
@@ -148,7 +144,7 @@ namespace WebMvc.Controllers
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("http://localhost:49578/");
-                var response = await client.GetAsync("/api/ books");
+                var response = await client.GetAsync("/api/books");
                 if (response.IsSuccessStatusCode)
                 {
                     var books = await response.Content.ReadAsAsync<IEnumerable<BookViewModel>>();
@@ -157,37 +153,21 @@ namespace WebMvc.Controllers
                 return null;
             }
         }
-
-       
-
-        public async Task<ActionResult> CreateAndSendForm(string path, BookViewModel model)
+        [HttpGet]
+        public async Task<BookViewModel> GetBookById(int id)
         {
             using (var client = new HttpClient())
             {
-                using (var content = new MultipartFormDataContent())
+                client.BaseAddress = new Uri("http://localhost:49578/");
+                var response = await client.GetAsync("/api/Books/GetBookById/" + id);
+                if (response.IsSuccessStatusCode)
                 {
-                    client.BaseAddress = new Uri("http://localhost:49578/");
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    content.Add(new StringContent(JsonConvert.SerializeObject(model)));
-
-                    var response = path == "Create" ? await client.PostAsync("/api/Books/" + path, content) :
-                                                        await client.PutAsync("/api/Books/" + path, content); ;
-                    if (response.IsSuccessStatusCode)
-                    {
-                        return RedirectToAction("Index", "Books");
-                    }
-                    else
-                    {
-                        return View("Error");
-                    }
-
+                    var book = await response.Content.ReadAsAsync<BookViewModel>();
+                    return book;
                 }
+                return null;
             }
         }
-
     }
-
 }
 
-
-        

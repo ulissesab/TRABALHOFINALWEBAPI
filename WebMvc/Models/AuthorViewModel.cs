@@ -8,7 +8,7 @@ namespace WebMvc.Models
 {
     public class AuthorViewModel
     {
-        public int AuthorId { get; set; }
+        public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public ICollection<Book> Books { get; set; }
